@@ -3,7 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { json } from "@remix-run/cloudflare"
 
 interface Env {
-  PRODUCTS_KV: KVNamespace;
+  H_B: KVNamespace;
 }
 
 export const loader = async ({
@@ -12,8 +12,9 @@ export const loader = async ({
 }) => {
   // Bindings are accessible on context.env
   let env = context.env as Env
+  console.log(env)
   return json(
-    await env.PRODUCTS_KV.get<{ name: string }>(`memory_date`, {
+    await env.H_B.get<{ name: string }>(`memory_date`, {
       type: "json",
     })
   );
