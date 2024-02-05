@@ -14,9 +14,10 @@ export const loader = async ({
   let env = context.env as Env
   console.log(env)
   return json(
-    await env.H_B.get<{ name: string }>(`memory_date`, {
-      type: "json",
-    })
+    // await env.H_B.get<{ name: string }>(`memory_date`, {
+    //   type: "json",
+    // })
+    await env
   );
 };
 
