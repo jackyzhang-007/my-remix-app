@@ -1,4 +1,23 @@
-import type { MetaFunction } from "@remix-run/cloudflare";
+import type { MetaFunction, LoaderArgs} from "@remix-run/cloudflare";
+import { useLoaderData } from "@remix-run/react";
+import { json } from "@remix-run/cloudflare"
+
+interface Env {
+  PRODUCTS_KV: KVNamespace;
+}
+
+export const loader = async ({
+  context,
+  params,
+}) => {
+  // Bindings are accessible on context.env
+  let env = context.env as Env
+  return json(
+    await env.PRODUCTS_KV.get<{ name: string }>(`memory_date`, {
+      type: "json",
+    })
+  );
+};
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,7 +26,13 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+
+
 export default function Index() {
+  const product = useLoaderData<typeof loader>();
+
+  if (!product) throw new Response(null, { status: 404 })
+  console.log(product)
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix</h1>
