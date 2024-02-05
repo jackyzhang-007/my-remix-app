@@ -7,18 +7,25 @@
     "build": "remix build",
     "dev": "remix dev --manual -c \"npm run start\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "wrangler pages dev --compatibility-date=2023-06-21 ./public",
+    "start": "wrangler pages dev --kv=H_B --d1 MY_DB=955ee6e0-32a4-466e-a162-554646821bf1 --compatibility-date=2023-06-21 ./public",
     "typecheck": "tsc",
     "pages:deploy": "npm run build && wrangler pages deploy ./public"
   },
   "dependencies": {
+    "@nextui-org/react": "^2.2.9",
     "@remix-run/cloudflare": "^2.5.1",
     "@remix-run/cloudflare-pages": "^2.5.1",
     "@remix-run/css-bundle": "^2.5.1",
     "@remix-run/react": "^2.5.1",
+    "@tailwindcss/typography": "^0.5.10",
+    "autoprefixer": "^10.4.17",
+    "framer-motion": "^11.0.3",
     "isbot": "^4.1.0",
+    "postcss": "^8.4.33",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-markdown": "^9.0.1",
+    "tailwindcss": "^3.4.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240129.0",

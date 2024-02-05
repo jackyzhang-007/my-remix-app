@@ -1,23 +1,39 @@
-import type { MetaFunction, LoaderArgs} from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import type { MetaFunction, LoaderFunctionArgs} from "@remix-run/cloudflare";
+import { useLoaderData, Link, useSearchParams } from "@remix-run/react";
 import { json } from "@remix-run/cloudflare"
+import { Button, Input, Textarea, Pagination } from "@nextui-org/react";
 
 interface Env {
   H_B: KVNamespace;
+  MY_DB: D1Database;
 }
+
+const PAGE_SIZE = 3
 
 export const loader = async ({
   context,
   params,
-}) => {
+  request,
+}: LoaderFunctionArgs) => {
   // Bindings are accessible on context.env
   let env = context.env as Env
-  console.log(env)
+  const search = new URL(request.url).searchParams
+  const page = Number(search.get('page') || 1)
+  const limit = PAGE_SIZE
+  const offset = page === 1 ? 0 : PAGE_SIZE * (page -1)
+  const stmt = env.MY_DB.prepare('SELECT * from Post ORDER BY created_at DESC LIMIT ?1 OFFSET ?2').bind(limit, offset);
+  const sfmt_total = env.MY_DB.prepare('SELECT  COUNT(*) AS total from Post');
+  const {total} = await sfmt_total.first();
+  const {results = []} = await stmt.all();
   return json(
-    // await env.H_B.get<{ name: string }>(`memory_date`, {
+    // await env.H_B.get<{ name: string }>(`product-13`, {
     //   type: "json",
     // })
-    await env
+    // await env
+    {
+      posts: results,
+      pageCount:  Math.ceil(total / PAGE_SIZE),
+    }
   );
 };
 
@@ -31,38 +47,29 @@ export const meta: MetaFunction = () => {
 
 
 export default function Index() {
-  const product = useLoaderData<typeof loader>();
-
-  if (!product) throw new Response(null, { status: 404 })
-  console.log(product)
+  const {posts, pageCount} = useLoaderData<typeof loader>();
+  const [searchParams, setSearchParams] = useSearchParams()
+  const page = Number(searchParams.get('page') || 1)
+  if (!posts) throw new Response(null, { status: 404 })
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <div className="p-12 flex flex-col gap-4">
+        {posts.map(post => {
+          return (
+            <div key={post.id}>
+              <Link to={`/posts/${post.id}`} className="text-xl">
+                {post.title}
+              </Link>
+              <div className="text-sm text-gray-400">
+                {post.created_at}
+              </div>
+            </div>
+          )
+        })}
+         <Pagination page={page} total={pageCount} onChange={page => {
+          const newSearchParams = new URLSearchParams(searchParams)
+          newSearchParams.set('page', String(page))
+          setSearchParams(newSearchParams)
+        }} />
+      </div>
   );
 }
