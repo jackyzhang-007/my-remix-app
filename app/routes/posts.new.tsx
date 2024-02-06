@@ -6,7 +6,7 @@ import {redirect, json, } from '@remix-run/cloudflare'
 interface Env {
     H_B: KVNamespace;
     MY_DB: D1Database;
-  }
+}
 
 export const action = async (c: ActionFunctionArgs) => {
     // 使用 `formData()` 获取表单数据

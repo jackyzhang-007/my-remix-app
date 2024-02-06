@@ -4,3 +4,7 @@ INSERT INTO Customers (CustomerID, CompanyName, ContactName) VALUES (1, 'Alfreds
 
 DROP TABLE IF EXISTS Post;
 CREATE TABLE IF NOT EXISTS Post (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, created_at REAL DEFAULT (datetime('now', 'localtime')));
+
+DROP TABLE IF EXISTS User;
+CREATE TABLE IF NOT EXISTS User (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT NOT NULL, created_at REAL DEFAULT (datetime('now', 'localtime')));
+
