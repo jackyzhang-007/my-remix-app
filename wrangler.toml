@@ -2,3 +2,6 @@
 binding = "MY_DB" # available in your Worker on env.DB
 database_name = "prod-d1-tutorial"
 database_id = "955ee6e0-32a4-466e-a162-554646821bf1"
+
+compatibility_flags = [ "nodejs_compat" ]
+

@@ -16,7 +16,7 @@ export const loader = async (c: LoaderFunctionArgs) => {
     const env = c.context.env as Env
     const stmt = env.MY_DB.prepare('SELECT * from Post WHERE ID = ?').bind(postId);
     const post = await stmt.first()
-    const user = await auth(c.request)
+    const user = await auth(c.request, env)
     if (!user.username) {
     return redirect("/signin")
     }

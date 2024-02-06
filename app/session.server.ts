@@ -4,7 +4,7 @@ export type UserSessionData = {
   username: string
 }
 
-export const userSessionStorage =
+export const userSessionStorage = (env: any) =>
   createCookieSessionStorage<UserSessionData>(
     {
       cookie: {
@@ -14,14 +14,14 @@ export const userSessionStorage =
         path: "/",
         sameSite: "lax",
         // 加密密钥
-        secrets: ['process.env.SESSION_SECRET' as string],
+        secrets: [env.SESSION_SECRET as string],
         secure: true,
       },
     }
   );
 
-  export const auth = async (request: Request) => {
-    const session = await userSessionStorage.getSession(request.headers.get("Cookie"));
+  export const auth = async (request: Request, env: any) => {
+    const session = await userSessionStorage(env).getSession(request.headers.get("Cookie"));
     return {
       username: session.get("username"),
     } as UserSessionData
